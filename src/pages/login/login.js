@@ -1,6 +1,7 @@
 import { onUpdateField, onSubmitForm, onSetError, onSetFormErrors } from '../../common/helpers';
 import { isValidLogin } from './login.api';
 import { formValidation } from './login.validation';
+import { history, routes } from '../../core/router';
 
 let login = {
     user: '',
@@ -28,12 +29,22 @@ onUpdateField('password', (event) => {
         onSetError('password', result);
     });
 });
+
+const onNavigate = isValid => {
+    if (isValid) {
+        history.push(routes.accountList);
+    } else {
+        alert('User or password invalid');
+    }
+}
+
+
 onSubmitForm('login-button', () => {
     formValidation.validateForm(login).then(result => {
         onSetFormErrors(result);
         if (result.succeeded) {
             isValidLogin(login).then(isValid => {
-                console.log({ isValid });
+                onNavigate(isValid);
             });
 
         }
