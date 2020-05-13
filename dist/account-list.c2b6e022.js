@@ -2861,7 +2861,153 @@ var mapAccountFromApiToVM = function mapAccountFromApiToVM(account) {
     lastTranslation: new Date(account.lastTranslation).toLocaleDateString()
   };
 };
-},{}],"pages/account-list/account-list.js":[function(require,module,exports) {
+},{}],"common/helpers/element.helpers.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.onSetValues = exports.onSetFormErrors = exports.onSetError = exports.onSubmitForm = exports.onUpdateField = void 0;
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var onUpdateField = function onUpdateField(id, callback) {
+  var element = document.getElementById(id);
+
+  element.oninput = function (event) {
+    return callback(event);
+  };
+
+  if (element.type !== 'checkbox') {
+    element.onblur = function (event) {
+      return callback(event);
+    };
+  }
+};
+
+exports.onUpdateField = onUpdateField;
+
+var onSubmitForm = function onSubmitForm(id, callback) {
+  var element = document.getElementById(id);
+
+  element.onclick = function (e) {
+    e.preventDefault();
+    callback();
+  };
+};
+
+exports.onSubmitForm = onSubmitForm;
+
+var onSetError = function onSetError(id, error) {
+  if (error.succeeded) {
+    removeElementClass(id);
+    setErrorMessage(id, '');
+  } else {
+    setElementClass(id);
+    setErrorMessage(id, error.message);
+  }
+};
+
+exports.onSetError = onSetError;
+
+var setElementClass = function setElementClass(id) {
+  var element = document.getElementById(id);
+
+  if (element) {
+    element.classList.add('error');
+  }
+};
+
+var removeElementClass = function removeElementClass(id) {
+  var element = document.getElementById(id);
+
+  if (element) {
+    element.classList.remove('error');
+  }
+};
+
+var setErrorMessage = function setErrorMessage(id, message) {
+  var messageElement = document.getElementById("".concat(id, "-error"));
+
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
+};
+
+var onSetFormErrors = function onSetFormErrors(_ref) {
+  var fieldErrors = _ref.fieldErrors;
+  Object.entries(fieldErrors).forEach(function (_ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+        key = _ref3[0],
+        value = _ref3[1];
+
+    onSetError(key, value);
+  });
+};
+
+exports.onSetFormErrors = onSetFormErrors;
+
+var setValue = function setValue(element, value) {
+  var elementType = element.tagName.toLowerCase();
+
+  if (elementType === 'select' || elementType === 'input') {
+    element.value = value;
+  } else {
+    element.textContent = value;
+  }
+};
+
+var onSetValue = function onSetValue(id, value) {
+  var element = document.getElementById(id);
+  console.log({
+    element: element
+  });
+
+  if (element) {
+    setValue(element, value);
+  }
+};
+
+var onSetValues = function onSetValues(values) {
+  Object.entries(values).forEach(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+        key = _ref5[0],
+        value = _ref5[1];
+
+    return onSetValue(key, value);
+  });
+};
+
+exports.onSetValues = onSetValues;
+},{}],"common/helpers/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _element = require("./element.helpers");
+
+Object.keys(_element).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _element[key];
+    }
+  });
+});
+},{"./element.helpers":"common/helpers/element.helpers.js"}],"pages/account-list/account-list.js":[function(require,module,exports) {
 "use strict";
 
 var _accountList = require("./account-list.api");
@@ -2870,10 +3016,22 @@ var _accountList2 = require("./account-list.helpers");
 
 var _accountListMappers = require("./account-list-mappers");
 
+var _helpers = require("../../common/helpers");
+
+var _router = require("../../core/router");
+
 (0, _accountList.getAccountList)().then(function (accountList) {
-  (0, _accountList2.addAccountRows)((0, _accountListMappers.mapAccountListFromApiToVM)(accountList));
+  var viewModelAccountList = (0, _accountListMappers.mapAccountListFromApiToVM)(accountList);
+  (0, _accountList2.addAccountRows)(viewModelAccountList);
+  viewModelAccountList.forEach(function (account) {
+    (0, _helpers.onUpdateField)("select-".concat(account.id), function (event) {
+      var route = event.target.value;
+
+      _router.history.push(route);
+    });
+  });
 });
-},{"./account-list.api":"pages/account-list/account-list.api.js","./account-list.helpers":"pages/account-list/account-list.helpers.js","./account-list-mappers":"pages/account-list/account-list-mappers.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./account-list.api":"pages/account-list/account-list.api.js","./account-list.helpers":"pages/account-list/account-list.helpers.js","./account-list-mappers":"pages/account-list/account-list-mappers.js","../../common/helpers":"common/helpers/index.js","../../core/router":"core/router/index.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -2901,7 +3059,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "61123" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49971" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
