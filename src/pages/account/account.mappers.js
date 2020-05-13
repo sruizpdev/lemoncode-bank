@@ -1,7 +1,12 @@
 export const mapAccountFromApiToVM = account => {
     return {
-        id: account.id,
-        type: account.type,
+        ...account,
         alias: account.name
+    }
+}
+export const mapAccountFromVMToApi = account => {
+    return {
+        ...account,
+        name: account.alias
     }
 }

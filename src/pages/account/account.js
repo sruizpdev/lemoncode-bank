@@ -1,8 +1,8 @@
-import { onUpdateField, onSubmitForm, onSetError } from '../../common/helpers';
+import { onUpdateField, onSubmitForm, onSetError, onSetValues, onSetFormErrors } from '../../common/helpers';
 import { formValidation } from './account.validations';
 import { history } from '../../core/router';
-import { getAccount } from './account.api';
-import { mapAccountFromApiToVM } from './account.mappers';
+import { getAccount, updateAccount, insertAccount } from './account.api';
+import { mapAccountFromApiToVM, mapAccountFromVMToApi } from './account.mappers';
 
 const params = history.getParams();
 const isEditMode = Boolean(params.id);
@@ -10,8 +10,9 @@ const isEditMode = Boolean(params.id);
 if (isEditMode) {
     getAccount(params.id).then(apiAccount => {
         account = mapAccountFromApiToVM(apiAccount);
+        onSetValues(account);
     });
-    console.log({ account });
+
 
 }
 
@@ -45,7 +46,19 @@ onUpdateField('alias', event => {
     });
 });
 
+const onSave = () => {
+    const apiAccount = mapAccountFromVMToApi(account);
+    return isEditMode ? updateAccount(apiAccount) : insertAccount(apiAccount);
+}
+
 onSubmitForm('save-button', () => {
-    console.log(account);
+    formValidation.validateForm(account).then(result => {
+        onSetFormErrors(result);
+        if (result.succeeded) {
+            onSave().then(apiAccount => {
+                history.back();
+            })
+        }
+    })
 });
 
