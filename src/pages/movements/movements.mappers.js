@@ -6,7 +6,7 @@ const mapMovementFromApiToVM = movementList => {
     return {
         id: movementList.id,
         iban: movementList.iban,
-        name: movementList.name,
+        alias: movementList.name,
         description: movementList.description,
         realTransaction: new Date(movementList.realTransaction).toLocaleDateString(),
         transaction: new Date(movementList.transaction).toLocaleDateString(),

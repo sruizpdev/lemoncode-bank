@@ -1901,6 +1901,43 @@ var getMovementsList = function getMovementsList() {
 };
 
 exports.getMovementsList = getMovementsList;
+},{"axios":"../node_modules/axios/index.js"}],"pages/account/account.api.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateAccount = exports.getAccount = exports.insertAccount = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var url = "".concat("http://localhost:3000/api", "/account");
+
+var insertAccount = function insertAccount(account) {
+  return _axios.default.post("".concat(url, "/").concat(account.id), account).then(function (response) {
+    return response.data;
+  });
+};
+
+exports.insertAccount = insertAccount;
+
+var getAccount = function getAccount(id) {
+  return _axios.default.get("".concat(url, "/").concat(id)).then(function (response) {
+    return response.data;
+  });
+};
+
+exports.getAccount = getAccount;
+
+var updateAccount = function updateAccount(account) {
+  return _axios.default.put("".concat(url, "/").concat(account.id), account).then(function (response) {
+    return response.data;
+  });
+};
+
+exports.updateAccount = updateAccount;
 },{"axios":"../node_modules/axios/index.js"}],"pages/movements/movements.helpers.js":[function(require,module,exports) {
 "use strict";
 
@@ -1974,7 +2011,7 @@ var mapMovementFromApiToVM = function mapMovementFromApiToVM(movementList) {
   return {
     id: movementList.id,
     iban: movementList.iban,
-    name: movementList.name,
+    alias: movementList.name,
     description: movementList.description,
     realTransaction: new Date(movementList.realTransaction).toLocaleDateString(),
     transaction: new Date(movementList.transaction).toLocaleDateString(),
@@ -2856,10 +2893,187 @@ Object.keys(_history).forEach(function (key) {
     }
   });
 });
-},{"./routes":"core/router/routes.js","./history":"core/router/history.js"}],"pages/movements/movements.js":[function(require,module,exports) {
+},{"./routes":"core/router/routes.js","./history":"core/router/history.js"}],"common/helpers/element.helpers.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.onSetValues = exports.onSetFormErrors = exports.onSetError = exports.onSubmitForm = exports.onUpdateField = void 0;
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+var onUpdateField = function onUpdateField(id, callback) {
+  var element = document.getElementById(id);
+
+  element.oninput = function (event) {
+    return callback(event);
+  };
+
+  if (element.type !== 'checkbox') {
+    element.onblur = function (event) {
+      return callback(event);
+    };
+  }
+};
+
+exports.onUpdateField = onUpdateField;
+
+var onSubmitForm = function onSubmitForm(id, callback) {
+  var element = document.getElementById(id);
+
+  element.onclick = function (e) {
+    e.preventDefault();
+    callback();
+  };
+};
+
+exports.onSubmitForm = onSubmitForm;
+
+var onSetError = function onSetError(id, error) {
+  if (error.succeeded) {
+    removeElementClass(id);
+    setErrorMessage(id, '');
+  } else {
+    setElementClass(id);
+    setErrorMessage(id, error.message);
+  }
+};
+
+exports.onSetError = onSetError;
+
+var setElementClass = function setElementClass(id) {
+  var element = document.getElementById(id);
+
+  if (element) {
+    element.classList.add('error');
+  }
+};
+
+var removeElementClass = function removeElementClass(id) {
+  var element = document.getElementById(id);
+
+  if (element) {
+    element.classList.remove('error');
+  }
+};
+
+var setErrorMessage = function setErrorMessage(id, message) {
+  var messageElement = document.getElementById("".concat(id, "-error"));
+
+  if (messageElement) {
+    messageElement.textContent = message;
+  }
+};
+
+var onSetFormErrors = function onSetFormErrors(_ref) {
+  var fieldErrors = _ref.fieldErrors;
+  Object.entries(fieldErrors).forEach(function (_ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+        key = _ref3[0],
+        value = _ref3[1];
+
+    onSetError(key, value);
+  });
+};
+
+exports.onSetFormErrors = onSetFormErrors;
+
+var setValue = function setValue(element, value) {
+  var elementType = element.tagName.toLowerCase();
+
+  if (elementType === 'select' || elementType === 'input') {
+    element.value = value;
+  } else {
+    element.textContent = value;
+  }
+};
+
+var onSetValue = function onSetValue(id, value) {
+  var element = document.getElementById(id);
+  console.log({
+    element: element
+  });
+
+  if (element) {
+    setValue(element, value);
+  }
+};
+
+var onSetValues = function onSetValues(values) {
+  Object.entries(values).forEach(function (_ref4) {
+    var _ref5 = _slicedToArray(_ref4, 2),
+        key = _ref5[0],
+        value = _ref5[1];
+
+    return onSetValue(key, value);
+  });
+};
+
+exports.onSetValues = onSetValues;
+},{}],"common/helpers/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _element = require("./element.helpers");
+
+Object.keys(_element).forEach(function (key) {
+  if (key === "default" || key === "__esModule") return;
+  Object.defineProperty(exports, key, {
+    enumerable: true,
+    get: function () {
+      return _element[key];
+    }
+  });
+});
+},{"./element.helpers":"common/helpers/element.helpers.js"}],"pages/account/account.mappers.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.mapAccountFromVMToApi = exports.mapAccountFromApiToVM = void 0;
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var mapAccountFromApiToVM = function mapAccountFromApiToVM(account) {
+  return _objectSpread(_objectSpread({}, account), {}, {
+    alias: account.name
+  });
+};
+
+exports.mapAccountFromApiToVM = mapAccountFromApiToVM;
+
+var mapAccountFromVMToApi = function mapAccountFromVMToApi(account) {
+  return _objectSpread(_objectSpread({}, account), {}, {
+    name: account.alias
+  });
+};
+
+exports.mapAccountFromVMToApi = mapAccountFromVMToApi;
+},{}],"pages/movements/movements.js":[function(require,module,exports) {
 "use strict";
 
 var _movements = require("./movements.api");
+
+var _account = require("../account/account.api");
 
 var _movements2 = require("./movements.helpers");
 
@@ -2867,15 +3081,21 @@ var _movements3 = require("./movements.mappers");
 
 var _router = require("../../core/router");
 
+var _helpers = require("../../common/helpers");
+
+var _account2 = require("../account/account.mappers");
+
 var params = _router.history.getParams();
 
-console.log(params);
+(0, _account.getAccount)(params.id).then(function (apiAccount) {
+  var account = (0, _account2.mapAccountFromApiToVM)(apiAccount);
+  (0, _helpers.onSetValues)(account);
+});
 (0, _movements.getMovementsList)().then(function (movementList) {
-  console.log(movementList);
   var viewModelMovementList = (0, _movements3.mapMovementListFromApiToVM)(movementList, params.id);
   (0, _movements2.addMovementRows)(viewModelMovementList);
 });
-},{"./movements.api":"pages/movements/movements.api.js","./movements.helpers":"pages/movements/movements.helpers.js","./movements.mappers":"pages/movements/movements.mappers.js","../../core/router":"core/router/index.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./movements.api":"pages/movements/movements.api.js","../account/account.api":"pages/account/account.api.js","./movements.helpers":"pages/movements/movements.helpers.js","./movements.mappers":"pages/movements/movements.mappers.js","../../core/router":"core/router/index.js","../../common/helpers":"common/helpers/index.js","../account/account.mappers":"pages/account/account.mappers.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
