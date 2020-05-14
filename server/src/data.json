@@ -23,6 +23,14 @@
       "name": "Ahorro",
       "balance": 8500,
       "lastTransaction": "2019-11-15T08:29:04"
+    },
+    {
+      "iban": "KZ78 0901 085O 499X 354Z",
+      "name": "Ana nomina",
+      "type": "1",
+      "balance": 0,
+      "lastTransaction": "2020-05-14T10:58:36.091Z",
+      "id": "cIY4SNG"
     }
   ],
   "movements": [

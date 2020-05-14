@@ -3087,12 +3087,16 @@ var _account2 = require("../account/account.mappers");
 
 var params = _router.history.getParams();
 
-(0, _account.getAccount)(params.id).then(function (apiAccount) {
-  var account = (0, _account2.mapAccountFromApiToVM)(apiAccount);
-  (0, _helpers.onSetValues)(account);
-});
 (0, _movements.getMovementsList)().then(function (movementList) {
   var viewModelMovementList = (0, _movements3.mapMovementListFromApiToVM)(movementList, params.id);
+  var totalBalance = viewModelMovementList.reduce(function (acc, item) {
+    return acc + parseInt(item.balance);
+  }, 0);
+  (0, _account.getAccount)(params.id).then(function (apiAccount) {
+    var account = (0, _account2.mapAccountFromApiToVM)(apiAccount);
+    account.balance = totalBalance;
+    (0, _helpers.onSetValues)(account);
+  });
   (0, _movements2.addMovementRows)(viewModelMovementList);
 });
 },{"./movements.api":"pages/movements/movements.api.js","../account/account.api":"pages/account/account.api.js","./movements.helpers":"pages/movements/movements.helpers.js","./movements.mappers":"pages/movements/movements.mappers.js","../../core/router":"core/router/index.js","../../common/helpers":"common/helpers/index.js","../account/account.mappers":"pages/account/account.mappers.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
