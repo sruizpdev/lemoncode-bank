@@ -1,5 +1,6 @@
-export const mapMovementListFromApiToVM = movementList => movementList.map(movement => mapMovementFromApiToVM(movement));
-
+export const mapMovementListFromApiToVM = (movementList, id) => {
+    return movementList.map(movement => mapMovementFromApiToVM(movement)).filter(mov => mov.accountId === id);
+}
 
 const mapMovementFromApiToVM = movementList => {
     return {
@@ -10,7 +11,7 @@ const mapMovementFromApiToVM = movementList => {
         realTransaction: new Date(movementList.realTransaction).toLocaleDateString(),
         transaction: new Date(movementList.transaction).toLocaleDateString(),
         balance: `${movementList.balance} €`,
-        amount: `${movementList.amount} €`
-
+        amount: `${movementList.amount} €`,
+        accountId: movementList.accountId
     }
 }
