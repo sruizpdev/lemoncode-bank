@@ -31,11 +31,11 @@ const getAccountRow = account => {
   nameCell.textContent = account.name;
 
   const balanceCell = document.createElement('td');
-  balanceCell.classList.add('align-right');
+  //balanceCell.classList.add('align-right');
   balanceCell.textContent = account.balance;
 
   const lastTransactionCell = document.createElement('td');
-  lastTransactionCell.classList.add('align-right');
+  //lastTransactionCell.classList.add('align-right');
   lastTransactionCell.textContent = account.lastTransaction;
 
   const optionCell = document.createElement('td');

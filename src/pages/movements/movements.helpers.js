@@ -9,7 +9,7 @@ const getMovementRow = movement => {
   descriptionCell.textContent = movement.description;
 
   const amountCell = document.createElement('td');
-  amountCell.classList.add('align-right');
+  //amountCell.classList.add('align-right');
   const amount = parseInt(movement.amount);
   if (amount < 0) {
     amountCell.classList.add('gasto');
@@ -17,7 +17,7 @@ const getMovementRow = movement => {
   amountCell.textContent = movement.amount;
 
   const balanceCell = document.createElement('td');
-  balanceCell.classList.add('align-right');
+  //balanceCell.classList.add('align-right');
   const balance = parseInt(movement.balance);
   if (balance < 0) {
     balanceCell.classList.add('gasto');

@@ -8,7 +8,7 @@ const mapAccountFromApiToVM = account => {
         iban: account.iban,
         name: account.name,
         balance: `${account.balance} €`,
-        lastTranslation: new Date(account.lastTranslation).toLocaleDateString()
+        lastTransaction: new Date(account.lastTransaction).toLocaleDateString()
 
     }
 
