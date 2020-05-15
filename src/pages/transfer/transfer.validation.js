@@ -49,13 +49,16 @@ const validationShema = {
                 validator: monthValidator,
             }
         ],
-        year: [{
-            validator: Validators.required,
-            message: 'Campo requerido',
-        },
-        {
-            validator: yearValidator,
-        }],
+        year: [
+            {
+                validator: Validators.required,
+                message: 'Campo requerido',
+            },
+            {
+                validator: yearValidator,
+            }],
+
+
         email: [Validators.email],
 
     }

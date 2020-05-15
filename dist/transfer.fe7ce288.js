@@ -5209,7 +5209,29 @@ Object.keys(_history).forEach(function (key) {
     }
   });
 });
-},{"./routes":"core/router/routes.js","./history":"core/router/history.js"}],"pages/transfer/transfer.js":[function(require,module,exports) {
+},{"./routes":"core/router/routes.js","./history":"core/router/history.js"}],"pages/transfer/transfer.api.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.insertTrans = void 0;
+
+var _axios = _interopRequireDefault(require("axios"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var url = "".concat("http://localhost:3000/api", "/trans");
+
+var insertTrans = function insertTrans(trans) {
+  return _axios.default.post(url, trans).then(function (_ref) {
+    var data = _ref.data;
+    return data;
+  });
+};
+
+exports.insertTrans = insertTrans;
+},{"axios":"../node_modules/axios/index.js"}],"pages/transfer/transfer.js":[function(require,module,exports) {
 "use strict";
 
 var _transfer = require("./transfer.helpers");
@@ -5221,6 +5243,8 @@ var _transfer2 = require("./transfer.validation");
 var _helpers = require("../../common/helpers");
 
 var _router = require("../../core/router");
+
+var _transfer3 = require("./transfer.api");
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -5324,10 +5348,10 @@ var trans = {
     (0, _helpers.onSetFormErrors)(result);
 
     if (result.succeeded) {
-      _router.history.push(_router.routes.accountList);
+      (0, _transfer3.insertTrans)(trans).then(function () {
+        _router.history.push(_router.routes.accountList);
+      });
     }
-
-    console.log(trans);
   });
 });
 
@@ -5336,7 +5360,7 @@ var params = _router.history.getParams();
 (0, _accountList.getAccountList)().then(function (accountList) {
   (0, _transfer.setAccountOptions)(accountList, params.id);
 });
-},{"./transfer.helpers":"pages/transfer/transfer.helpers.js","../account-list/account-list.api":"pages/account-list/account-list.api.js","./transfer.validation":"pages/transfer/transfer.validation.js","../../common/helpers":"common/helpers/index.js","../../core/router":"core/router/index.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./transfer.helpers":"pages/transfer/transfer.helpers.js","../account-list/account-list.api":"pages/account-list/account-list.api.js","./transfer.validation":"pages/transfer/transfer.validation.js","../../common/helpers":"common/helpers/index.js","../../core/router":"core/router/index.js","./transfer.api":"pages/transfer/transfer.api.js"}],"../node_modules/parcel/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -5364,7 +5388,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55822" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57374" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

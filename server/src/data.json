@@ -124,5 +124,18 @@
       "accountId": "3"
     }
   ],
-  "transfer": []
+  "trans": [
+    {
+      "iban": "ES91 2100 0418 4502 0005 1332",
+      "name": "Sergio Ruiz",
+      "amount": "100",
+      "concept": "prueba de transferencia",
+      "notes": "",
+      "day": "22",
+      "month": "3",
+      "year": "2020",
+      "email": "sergiotto@outlook.com",
+      "id": 1
+    }
+  ]
 }

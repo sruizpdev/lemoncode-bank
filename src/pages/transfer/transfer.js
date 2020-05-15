@@ -3,6 +3,7 @@ import { getAccountList } from '../account-list/account-list.api';
 import { formValidation } from './transfer.validation';
 import { onUpdateField, onSubmitForm, onSetError, onSetFormErrors } from '../../common/helpers';
 import { history, routes } from '../../core/router';
+import { insertTrans } from './transfer.api';
 
 let trans = {
     iban: '',
@@ -99,13 +100,14 @@ onUpdateField('email', (event) => {
     });
 });
 onSubmitForm('transfer-button', () => {
+
     formValidation.validateForm(trans).then(result => {
         onSetFormErrors(result);
-        if (result.succeeded) {
-            history.push(routes.accountList);
-        }
-        console.log(trans);
 
+        if (result.succeeded) {
+            insertTrans(trans).then(() => { history.push(routes.accountList) });
+
+        }
     });
 
 
