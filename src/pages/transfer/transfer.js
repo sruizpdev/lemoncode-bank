@@ -57,16 +57,7 @@ onUpdateField('concept', (event) => {
         onSetError('concept', result);
     });
 });
-onUpdateField('notes', (event) => {
-    const value = event.target.value;
-    trans = {
-        ...trans,
-        notes: value
-    };
-    formValidation.validateField('notes', trans.notes).then(result => {
-        onSetError('notes', result);
-    });
-});
+
 onUpdateField('day', (event) => {
     const value = event.target.value;
     trans = {
@@ -113,6 +104,8 @@ onSubmitForm('transfer-button', () => {
         if (result.succeeded) {
             history.push(routes.accountList);
         }
+        console.log(trans);
+
     });
 
 
